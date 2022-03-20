@@ -18,6 +18,7 @@ const form = document.querySelector("form");
 const cardNumber = document.querySelector("#cc-num");
 const zipCode = document.querySelector("#zip");
 const cvv = document.querySelector("#cvv");
+const activitiesInputs = document.querySelectorAll("input[type='checkbox']");
 
 
 
@@ -92,7 +93,7 @@ const handlePayments = (e) => {
 
 /*   form validation functions   */
 
-const nameValidator = () => {
+const nameValidator = () => {                                                             //  specific functions to validate single inputs
    const nameValue = nameInput.value;
    const nameIsValid = /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(nameValue);
    return nameIsValid;
@@ -108,8 +109,6 @@ const activitiesValidator = () => {
    const activitiesIsValid = totalCost > 0;
    return activitiesIsValid;
 }
-
-
 
 const cardNumberValidator = () => {
    const cardNumberValue = cardNumber.value;
@@ -129,7 +128,7 @@ const cvvValidator = () => {
    return cvvIsValid;
 }
 
-const errorHandler = (func, element, e) => {
+const errorHandler = (func, element, e, blankError, formattingError) => {                         //  generic function to handle the changes to elements depending on the validation result
    if (func()) {
       element.parentElement.classList.add("valid");
       element.parentElement.classList.remove("not-valid");
@@ -139,9 +138,30 @@ const errorHandler = (func, element, e) => {
       element.parentElement.classList.add("not-valid");
       element.parentElement.lastElementChild.style.display = "block";
       e.preventDefault();
+      if (element.value === "") {
+         element.parentElement.lastElementChild.textContent = blankError;
+      } else {
+         element.parentElement.lastElementChild.textContent = formattingError;
+      }
    }
 }
 
+const errorHandlerRealTime = (func, element, blankError, formattingError) => {            //  generic function to handle the changes to elements on real time depending on the validation result
+   if (func()) {
+      element.parentElement.classList.add("valid");
+      element.parentElement.classList.remove("not-valid");
+      element.parentElement.lastElementChild.style.display = "none";
+   } else {
+      element.parentElement.classList.remove("valid");
+      element.parentElement.classList.add("not-valid");
+      element.parentElement.lastElementChild.style.display = "block";
+      if (element.value === "") {
+         element.parentElement.lastElementChild.textContent = blankError;
+      } else {
+         element.parentElement.lastElementChild.textContent = formattingError;
+      }
+   }
+}
 
 /*    event listeners   */
 
@@ -175,31 +195,10 @@ paymentSelect.addEventListener('change', e => {
 })
 
 form.addEventListener('submit', e => {
-   /* if (nameValidator()) {
-      nameInput.parentElement.classList.add("valid");
-      nameInput.parentElement.classList.remove("not-valid");
-      nameInput.parentElement.lastElementChild.style.display = "none";
-   } else {
-      nameInput.parentElement.classList.remove("valid");
-      nameInput.parentElement.classList.add("not-valid");
-      nameInput.parentElement.lastElementChild.style.display = "block";
-      e.preventDefault();
-   } */
+   
+   errorHandler(nameValidator, nameInput, e, "Name field cannot be blank", "Name not valid");
 
-   errorHandler(nameValidator, nameInput, e);
-
-   /* if (emailValidator()) {
-      emailInput.parentElement.classList.add("valid");
-      emailInput.parentElement.classList.remove("not-valid");
-      emailInput.parentElement.lastElementChild.style.display = "none";
-   } else {
-      emailInput.parentElement.classList.remove("valid");
-      emailInput.parentElement.classList.add("not-valid");
-      emailInput.parentElement.lastElementChild.style.display = "block";
-      e.preventDefault();
-   } */
-
-   errorHandler(emailValidator, emailInput, e);
+   errorHandler(emailValidator, emailInput, e,"Email field cannot be blank", "Email address must be formatted correctly");
 
    if (activitiesValidator()) {
       activities.classList.add("valid");
@@ -213,46 +212,37 @@ form.addEventListener('submit', e => {
    }
    
    if (paymentSelect.value === "credit-card") {
-      /* if (cardNumberValidator()) {
-         cardNumber.parentElement.classList.add("valid");
-         cardNumber.parentElement.classList.remove("not-valid");
-         cardNumber.parentElement.lastElementChild.style.display = "none";
-      } else {
-         cardNumber.parentElement.classList.remove("valid");
-         cardNumber.parentElement.classList.add("not-valid");
-         cardNumber.parentElement.lastElementChild.style.display = "block";
-         e.preventDefault();
-      } */
-
-      errorHandler(cardNumberValidator, cardNumber, e)
-
-      /* if (cardNumberValidator()) {
-         cardNumber.parentElement.classList.add("valid");
-         cardNumber.parentElement.classList.remove("not-valid");
-         cardNumber.parentElement.lastElementChild.style.display = "none";
-      } else {
-         cardNumber.parentElement.classList.remove("valid");
-         cardNumber.parentElement.classList.add("not-valid");
-         cardNumber.parentElement.lastElementChild.style.display = "block";
-         e.preventDefault();
-      } */
-
-      errorHandler(zipCodeValidator, zipCode, e);
-
-      /* if (cardNumberValidator()) {
-         cardNumber.parentElement.classList.add("valid");
-         cardNumber.parentElement.classList.remove("not-valid");
-         cardNumber.parentElement.lastElementChild.style.display = "none";
-      } else {
-         cardNumber.parentElement.classList.remove("valid");
-         cardNumber.parentElement.classList.add("not-valid");
-         cardNumber.parentElement.lastElementChild.style.display = "block";
-         e.preventDefault();
-      } */
-
-      errorHandler(cvvValidator, cvv, e);
+      errorHandler(cardNumberValidator, cardNumber, e, "Card Number field cannot be blank", "Card Number not valid");
+      errorHandler(zipCodeValidator, zipCode, e, "Zip Code field cannot be blank", "Zip Code not valid");
+      errorHandler(cvvValidator, cvv, e, "CVV field cannot be blank", "CVV not valid");
    }
-   
+})
 
-   
+activitiesInputs.forEach(element => {
+   element.addEventListener('focus', () => {
+      element.parentElement.classList.add("focus");
+   })
+   element.addEventListener('blur', () => {
+      document.querySelector(".focus").classList.remove("focus");
+   })
+})
+
+nameInput.addEventListener('keyup', () => {
+   errorHandlerRealTime(nameValidator, nameInput, "Name field cannot be blank", "Name not valid");
+})
+
+emailInput.addEventListener('keyup', () => {
+   errorHandlerRealTime(emailValidator, emailInput, "Email field cannot be blank", "Email address must be formatted correctly");
+})
+
+cardNumber.addEventListener('keyup', () => {
+   errorHandlerRealTime(cardNumberValidator, cardNumber, "Card Number field cannot be blank", "Card Number not valid");
+})
+
+zipCode.addEventListener('keyup', () => {
+   errorHandlerRealTime(zipCodeValidator, zipCode, "Zip Code field cannot be blank", "Zip Code not valid");
+})
+
+cvv.addEventListener('keyup', () => {
+   errorHandlerRealTime(cvvValidator, cvv, "CVV field cannot be blank", "CVV not valid");
 })
