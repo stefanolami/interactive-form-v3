@@ -475,7 +475,7 @@ button:hover {
 
 .disabled {
   cursor: not-allowed !important;
-  background: rgba(197, 163, 175, 0.1);
+  background: rgba(197, 163, 175, 0.1) !important;
 }
 
 /* ================================= 
