@@ -194,7 +194,7 @@ paymentSelect.addEventListener('change', e => {
    handlePayments(e);
 })
 
-form.addEventListener('submit', e => {
+form.addEventListener('submit', e => {                                  // checks for any error in the form when it's submitted
    
    errorHandler(nameValidator, nameInput, e, "Name field cannot be blank", "Name not valid");
 
@@ -218,7 +218,7 @@ form.addEventListener('submit', e => {
    }
 })
 
-activitiesInputs.forEach(element => {
+activitiesInputs.forEach(element => {                             // handles the activities focus
    element.addEventListener('focus', () => {
       element.parentElement.classList.add("focus");
    })
@@ -226,6 +226,10 @@ activitiesInputs.forEach(element => {
       document.querySelector(".focus").classList.remove("focus");
    })
 })
+
+
+/*   event listeners for real time form validation   */
+
 
 nameInput.addEventListener('keyup', () => {
    errorHandlerRealTime(nameValidator, nameInput, "Name field cannot be blank", "Name not valid");
