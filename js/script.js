@@ -22,7 +22,7 @@ const activitiesInputs = document.querySelectorAll("input[type='checkbox']");
 
 
 
-nameInput.focus();
+nameInput.focus();                                          
 
 otherJobInput.style.display = "none";
 
@@ -71,7 +71,7 @@ const handleActivities = (e) => {                                             //
    activitiesCost.textContent = `$${totalCost}`;
 }
 
-const handlePayments = (e) => {
+const handlePayments = (e) => {                             //  takes care of showing the selected payment method, while hiding the others
    value = e.target.value;
    if (value === "credit-card") {
       creditCardDiv.style.display = "block";
